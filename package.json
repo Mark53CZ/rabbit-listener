@@ -1,0 +1,26 @@
+{
+  "name": "rabbit-listener",
+  "version": "1.0.0",
+  "description": "A message queue listener for RabbitMQ",
+  "main": "lib/rabbit-listener.js",
+  "scripts": {
+    "test": "mocha test/."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TBear79/rabbit-listener.git"
+  },
+  "keywords": [
+    "RabbitMQ",
+    "Message",
+    "Queue",
+    "Event",
+    "listener"
+  ],
+  "author": "Thorbjørn Gliese Jelgren",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TBear79/rabbit-listener/issues"
+  },
+  "homepage": "https://github.com/TBear79/rabbit-listener#readme"
+}
