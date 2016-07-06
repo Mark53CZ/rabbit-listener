@@ -22,5 +22,12 @@
   "bugs": {
     "url": "https://github.com/TBear79/rabbit-listener/issues"
   },
-  "homepage": "https://github.com/TBear79/rabbit-listener#readme"
+  "homepage": "https://github.com/TBear79/rabbit-listener#readme",
+  "dependencies": {
+    "amqplib": "^0.4.2",
+    "util": "^0.10.3"
+  },
+  "devDependencies": {
+    "rabbit-chatter": "^1.0.1"
+  }
 }
