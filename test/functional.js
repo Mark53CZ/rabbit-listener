@@ -10,11 +10,10 @@
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
-const sinon = require('sinon');
 const amqplib = require('amqplib');
 const util = require('util');
-
-const rabbitChatter = require('../lib/rabbit-chatter.js');
+const rabbitChatter = require('rabbit-chatter');
+const rabbitListener = require('../lib/rabbit-listener.js');
 
 describe('RabbitMq connection', () => {
 	describe('Test if messages are emittet to the exchange', function() {
@@ -37,14 +36,15 @@ describe('RabbitMq connection', () => {
 		}
 
 		
-		const rabbit = rabbitChatter.rabbit(options);
+		const rabbit1 = rabbitChatter.rabbit(options);
+		const rabbit2 = rabbitListener.rabbit(options);
 
 		before(function () { 
 		});
 		after(function () { 
 		});
 
-		it('should return the correct message from queue',  (done) => {
+		it('should return the correct message in the callback',  (done) => {
 			let connection; 
 			let connectionCloseTimerId;
 			const testContent = 'TESTING 123';
@@ -52,54 +52,39 @@ describe('RabbitMq connection', () => {
 			
 			let msgCount = 0;
 
-			setTimeout(() => { rabbit.chat(testContent, { correlationId: testCorrelationId }); }, 50);
+			setTimeout(() => { rabbit1.chat(testContent, { correlationId: testCorrelationId }); }, 50);
 
-			return amqplib
-				 .connect(options.protocol + '://' + options.host)
-				.then((conn) => { connection = conn; return conn.createChannel(); })
-				.then((channel) => {
-					return channel.assertExchange(options.exchangeName, options.exchangeType, {durable: options.durable})
-						.then((ok) => {
-							return channel.assertQueue('', {exclusive: true})
-					    				.then((q) => {
-					    					channel.bindQueue(q.queue, options.exchangeName, '');
+			return new Promise((resolve, reject) => {
+				rabbit2.listen((msg) => {
+					console.log("TEST: " + util.inspect(msg));
 
-					    					return channel.consume(q.queue, (msg) => {
-					    						
-					    						msgCount++;
+					msgCount++;
 
-					    						clearTimeout(connectionCloseTimerId);
+					clearTimeout(connectionCloseTimerId);
 
-										        connectionCloseTimerId = setTimeout(() => { 
-										        	expect(msg.content.toString()).to.equal(testContent);
-													expect(msg.properties.appId).to.equal(testAppId1);
-													expect(msg.properties.correlationId).to.equal(testCorrelationId);
-										        	expect(msgCount).to.equal(1);
-										        	
-										        	connection.close(); 
-
-										        	done();
-										        }, 500);
-
-										    }, {noAck: true});
-					    				})
-
-					  	});
-				})
-				.catch((ex) => { throw ex; });
-
-			
-			
+			        connectionCloseTimerId = setTimeout(() => { 
+			        	expect(msg.content.toString()).to.equal(testContent);
+						expect(msg.properties.appId).to.equal(testAppId1);
+						expect(msg.properties.correlationId).to.equal(testCorrelationId);
+			        	expect(msgCount).to.equal(1);
+			        	
+			        	done();
+						resolve();
+			        }, 500);
+				});
+			})
+			.catch((ex) => { throw ex; });
 		});
 
 
-
-		it('should receice 1000 messages',  (done) => {
-
+		it('should receive 1000 messages',  (done) => {
 			const numberOfMessagesToSend = 1000;
 
 			let connection; 
 			let connectionCloseTimerId;
+			const testContent = 'TESTING 123';
+			const testCorrelationId = 'CORRELATIONIDTEST';
+			
 			let msgCount = 0;
 
 			setTimeout(() => { 
@@ -107,49 +92,89 @@ describe('RabbitMq connection', () => {
 				let tmpTimer;
 
 				tmpTimer = setInterval(() => { 
-					setTimeout(() => { rabbit.chat("TESTING"); }, 50);
+					setTimeout(() => { rabbit1.chat("TESTING"); }, 50);
 					i++; 
 					if(i >= numberOfMessagesToSend) 
 						clearInterval(tmpTimer);
-				}, 10);
+				}, 1);
 
 					
 			}, 500);
 
-			return amqplib
-				 .connect(options.protocol + '://' + options.host)
-				.then((conn) => { connection = conn; return conn.createChannel(); })
-				.then((channel) => {
-					return channel.assertExchange(options.exchangeName, options.exchangeType, {durable: options.durable})
-						.then((ok) => {
-							return channel.assertQueue('', {exclusive: true})
-					    				.then((q) => {
-					    					channel.bindQueue(q.queue, options.exchangeName, '');
+			return new Promise((resolve, reject) => {
+				rabbit2.listen((msg) => {
 
-					    					return channel.consume(q.queue, (msg) => {
-					    						
-					    						msgCount++;
+					msgCount++;
 
-					    						clearTimeout(connectionCloseTimerId);
+					clearTimeout(connectionCloseTimerId);
 
-										        connectionCloseTimerId = setTimeout(() => { 
-										        	expect(msgCount).to.equal(numberOfMessagesToSend);
-										        	
-										        	connection.close(); 
+			        connectionCloseTimerId = setTimeout(() => { 
+			        	expect(msgCount).to.equal(1000);
 
-										        	done();
-										        }, 500);
-
-										    }, {noAck: true});
-					    				})
-
-					  	});
-				})
-				.catch((ex) => { throw ex; });
-
-			
-			
+			        	done();
+						resolve();
+			        }, 500);
+				});
+			})
+			.catch((ex) => { throw ex; });
 		});
+
+		// it('should receive 1000 messages',  (done) => {
+
+		// 	const numberOfMessagesToSend = 1000;
+
+		// 	let connection; 
+		// 	let connectionCloseTimerId;
+		// 	let msgCount = 0;
+
+		// 	setTimeout(() => { 
+		// 		let i = 0;
+		// 		let tmpTimer;
+
+		// 		tmpTimer = setInterval(() => { 
+		// 			setTimeout(() => { rabbit.chat("TESTING"); }, 50);
+		// 			i++; 
+		// 			if(i >= numberOfMessagesToSend) 
+		// 				clearInterval(tmpTimer);
+		// 		}, 10);
+
+					
+		// 	}, 500);
+
+		// 	return amqplib
+		// 		 .connect(options.protocol + '://' + options.host)
+		// 		.then((conn) => { connection = conn; return conn.createChannel(); })
+		// 		.then((channel) => {
+		// 			return channel.assertExchange(options.exchangeName, options.exchangeType, {durable: options.durable})
+		// 				.then((ok) => {
+		// 					return channel.assertQueue('', {exclusive: true})
+		// 			    				.then((q) => {
+		// 			    					channel.bindQueue(q.queue, options.exchangeName, '');
+
+		// 			    					return channel.consume(q.queue, (msg) => {
+					    						
+		// 			    						msgCount++;
+
+		// 			    						clearTimeout(connectionCloseTimerId);
+
+		// 								        connectionCloseTimerId = setTimeout(() => { 
+		// 								        	expect(msgCount).to.equal(numberOfMessagesToSend);
+										        	
+		// 								        	connection.close(); 
+
+		// 								        	done();
+		// 								        }, 500);
+
+		// 								    }, {noAck: true});
+		// 			    				})
+
+		// 			  	});
+		// 		})
+		// 		.catch((ex) => { throw ex; });
+
+			
+			
+		// });
 	});
 });
 
