@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "rabbit-chatter": "^1.0.1"
+    "rabbit-chatter": "^1.0.3",
+    "sinon": "^1.17.4"
   }
 }
