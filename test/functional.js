@@ -39,10 +39,15 @@ describe('RabbitMq connection', () => {
 		
 		const rabbit1 = rabbitChatter.rabbit(options);
 		const rabbit2 = rabbitListener.rabbit(options);
-		
+		const cb = () => { };
+
+		let callbackOnCloseSpy;
+
 		before(function () { 
+			callbackOnCloseSpy = sinon.spy(cb);
 		});
 		after(function () { 
+			//callbackOnCloseSpy.restore();
 		});
 
 		it('should return the correct message in the callback',  (done) => {
@@ -58,6 +63,8 @@ describe('RabbitMq connection', () => {
 			return new Promise((resolve, reject) => {
 				rabbit2.listen(
 					(msg) => {
+						//console.log("TEST: " + util.inspect(callbackOnCloseSpy));
+
 						msgCount++;
 
 						clearTimeout(connectionCloseTimerId);
@@ -68,13 +75,13 @@ describe('RabbitMq connection', () => {
 							expect(msg.properties.correlationId).to.equal(testCorrelationId);
 				        	expect(msgCount).to.equal(1);
 				        	
-				        	//expect(callbackOnCloseSpy.calledOnce).to.be.true();
-				        }, 500);
+				        	expect(callbackOnCloseSpy.called).to.be.true;
+
+				        	done();
+							resolve();
+				        }, 1000);
 					},
-					() => { 
-						done();
-						resolve();
-					}
+					callbackOnCloseSpy
 				);
 			})
 			.catch((ex) => { throw ex; });
@@ -114,7 +121,7 @@ describe('RabbitMq connection', () => {
 
 			        connectionCloseTimerId = setTimeout(() => { 
 			        	expect(msgCount).to.equal(1000);
-
+						expect(callbackOnCloseSpy.calledOnce).to.be.true;
 			        	done();
 						resolve();
 			        }, 500);
