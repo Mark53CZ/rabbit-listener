@@ -63,8 +63,6 @@ describe('RabbitMq connection', () => {
 			return new Promise((resolve, reject) => {
 				rabbit2.listen(
 					(msg) => {
-						//console.log("TEST: " + util.inspect(callbackOnCloseSpy));
-
 						msgCount++;
 
 						clearTimeout(connectionCloseTimerId);
@@ -97,19 +95,11 @@ describe('RabbitMq connection', () => {
 			const testCorrelationId = 'CORRELATIONIDTEST';
 			
 			let msgCount = 0;
-
+		
 			setTimeout(() => { 
-				let i = 0;
-				let tmpTimer;
-
-				tmpTimer = setInterval(() => { 
-					setTimeout(() => { rabbit1.chat("TESTING"); }, 50);
-					i++; 
-					if(i >= numberOfMessagesToSend) 
-						clearInterval(tmpTimer);
-				}, 1);
-
-					
+				for(let i = 0; i < numberOfMessagesToSend; i++){
+					rabbit1.chat("TESTING");
+				}
 			}, 500);
 
 			return new Promise((resolve, reject) => {
