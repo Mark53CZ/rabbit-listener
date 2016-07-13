@@ -20,49 +20,56 @@ describe('RabbitMq connection', () => {
 	describe('Test if messages are emittet to the exchange', function() {
 		this.timeout(30000);
 
-		const testAppId1 = 'TESTAPPIDALL';
-
-		const chatterOptions = { 
-			appId: testAppId1,
-			protocol: 'amqp',
-			username: 'guest',
-			password: 'guest',
-			host: 'localhost',
-			port: 5672,
-			silent: true,
-			host: 'localhost',
-			exchangeName: 'TEST',
-			exchangeType: 'topic',
-			durable: false
-		}
-
-		const listenOptions = { 
-			appId: testAppId1,
-			protocol: 'amqp',
-			username: 'guest',
-			password: 'guest',
-			host: 'localhost',
-			port: 5672,
-			host: 'localhost',
-			exchangeName: 'TEST',
-			exchangeType: 'topic',
-			durable: false
-		}
-
-		
-		const rabbit1 = rabbitChatter.rabbit(chatterOptions);
-		const rabbit2 = rabbitListener.rabbit(listenOptions);
 		const cb = () => { };
 
 		let callbackOnCloseSpy;
 
+		let rabbit1, rabbit2;
+
 		before(function () { 
 			callbackOnCloseSpy = sinon.spy(cb);
+
+			const chatterOptions = { 
+				appId: testAppId1,
+				protocol: 'amqp',
+				username: 'guest',
+				password: 'guest',
+				host: 'localhost',
+				port: 5672,
+				silent: true,
+				host: 'localhost',
+				exchangeName: 'TEST',
+				exchangeType: 'topic',
+				durable: false
+			}
+
+			const listenOptions = { 
+				appId: testAppId1,
+				protocol: 'amqp',
+				username: 'guest',
+				password: 'guest',
+				host: 'localhost',
+				port: 5672,
+				host: 'localhost',
+				exchangeName: 'TEST',
+				exchangeType: 'topic',
+				durable: false,
+				connectionTimeout:500,
+				callbackOnClose: callbackOnCloseSpy
+			}
+
+			
+			rabbit1 = rabbitChatter.rabbit(chatterOptions);
+			rabbit2 = rabbitListener.rabbit(listenOptions);
+
 		});
 		after(function () { 
 			//callbackOnCloseSpy.restore();
 		});
 
+		const testAppId1 = 'TESTAPPIDALL';
+
+		
 		it('should return the correct message in the callback',  (done) => {
 			let connection; 
 			let connectionCloseTimerId;
@@ -91,8 +98,7 @@ describe('RabbitMq connection', () => {
 				        	done();
 							resolve();
 				        }, 1000);
-					},
-					callbackOnCloseSpy
+					}
 				);
 			})
 			.catch((ex) => { throw ex; });
