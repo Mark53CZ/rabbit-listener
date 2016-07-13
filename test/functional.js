@@ -22,7 +22,7 @@ describe('RabbitMq connection', () => {
 
 		const testAppId1 = 'TESTAPPIDALL';
 
-		const options = { 
+		const chatterOptions = { 
 			appId: testAppId1,
 			protocol: 'amqp',
 			username: 'guest',
@@ -36,9 +36,22 @@ describe('RabbitMq connection', () => {
 			durable: false
 		}
 
+		const listenOptions = { 
+			appId: testAppId1,
+			protocol: 'amqp',
+			username: 'guest',
+			password: 'guest',
+			host: 'localhost',
+			port: 5672,
+			host: 'localhost',
+			exchangeName: 'TEST',
+			exchangeType: 'topic',
+			durable: false
+		}
+
 		
-		const rabbit1 = rabbitChatter.rabbit(options);
-		const rabbit2 = rabbitListener.rabbit(options);
+		const rabbit1 = rabbitChatter.rabbit(chatterOptions);
+		const rabbit2 = rabbitListener.rabbit(listenOptions);
 		const cb = () => { };
 
 		let callbackOnCloseSpy;
