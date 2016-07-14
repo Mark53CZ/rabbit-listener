@@ -25,7 +25,7 @@ Then use `require()` to load it in your code:
 Initialize a new instance:
 
 ```javascript
-	var rabbit = rabbitChatter.rabbit(options);
+	var rabbit = rabbitListener.rabbit(options);
 ```
 
 And then you can start listening for messages:
@@ -172,7 +172,7 @@ Specify a function that should be called when the connection is closed
 To run tests on this module, make sure that the modules for the tests are installed
 
 ```
-	npm install rabbit-chatter --dev
+	npm install rabbit-listener --dev
 ```
 
 Then run:
