@@ -24,8 +24,7 @@
   },
   "homepage": "https://github.com/TBear79/rabbit-listener#readme",
   "dependencies": {
-    "amqplib": "^0.4.2",
-    "util": "^0.10.3"
+    "amqplib": "^0.4.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
