@@ -185,10 +185,6 @@ NOTICE: The test is not unit test but tests the functionality for submitting to 
 
 #Release notes
 
-* 1.0.4 - Updated license type to MIT
-* 1.0.3 - Added throttling using [dont-collide](https://www.npmjs.com/package/dont-collide))
-* 1.0.2 - Quickfix for connection that is sometimes null when trying to close it
-* 1.0.1 - Added support for sending properties
 * 1.0.0 - First working version
 
 
@@ -202,6 +198,7 @@ Further documentation the topics according to this module:
 #Keywords
 
 * rabbitmq
+* listener
 * amqp
 * amqplib
 * message queue
