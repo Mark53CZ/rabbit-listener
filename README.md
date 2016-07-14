@@ -165,7 +165,7 @@ Function
 
 Default: An empty function
 
-Specify a function that should be called when the connection is closed
+Specify a function that should be called when the connection is closed. Takes no parameters.
 
 # Tests
 
