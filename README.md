@@ -159,6 +159,14 @@ Default: null
 
 Set the number of miliseconds before the connections closes automatically. Send null in order to keep connection open.
 
+### prefetch
+
+Number
+
+Default: 0
+
+Number of unacknowledged messages to fetch. Useful when you want to spread the load equally between servers.
+
 ### callbackOnClose
 
 Function
@@ -166,6 +174,20 @@ Function
 Default: An empty function
 
 Specify a function that should be called when the connection is closed. Takes no parameters.
+
+### handleError
+
+Function 
+
+Default: See below
+
+Specify a function that should be called when an error occurs. The default looks like this:
+
+```javascript
+function(ex) {
+    console.log('ERROR in rabbit-listener: ' + JSON.stringify(ex, null, 4));
+}
+```
 
 # Tests
 
