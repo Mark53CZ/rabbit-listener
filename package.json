@@ -1,6 +1,6 @@
 {
   "name": "rabbit-listener",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A message queue listener for RabbitMQ",
   "main": "lib/rabbit-listener.js",
   "scripts": {
