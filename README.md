@@ -151,6 +151,14 @@ Default: 'rabbit-chat'
 
 The name of the exchange.
 
+### queueName
+
+String
+
+Default: ''
+
+The name of the queue.
+
 ### connectionTimeout
 
 Number or null
@@ -207,6 +215,7 @@ NOTICE: The test is not unit test but tests the functionality for submitting to 
 
 #Release notes
 
+* 1.0.1 - Added queueName option
 * 1.0.0 - First working version
 
 
