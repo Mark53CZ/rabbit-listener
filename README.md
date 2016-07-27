@@ -151,13 +151,17 @@ Default: 'rabbit-chat'
 
 The name of the exchange.
 
-### queueName
+### routingKey
 
 String
 
 Default: ''
 
 The name of the queue.
+
+### queueName
+
+Deprecated. Use routingKey instead.
 
 ### connectionTimeout
 
@@ -215,6 +219,7 @@ NOTICE: The test is not unit test but tests the functionality for submitting to 
 
 #Release notes
 
+* 1.0.2 - Renamed queueName to routingKey. queueName still works but is deprecated.
 * 1.0.1 - Added queueName option
 * 1.0.0 - First working version
 
